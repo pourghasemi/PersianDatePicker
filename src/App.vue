@@ -24,14 +24,6 @@
 
       }
     },
-    methods: {
-      getStart(dateObj) {
-        this.startDate = dateObj
-      },
-      getEnd(dateObj) {
-        this.endDate = dateObj
-      },
-    },
     components: {
       VueMoment
     }

@@ -5,10 +5,10 @@
   
     <div :class="visible ? 'persianDate-box':''">
       <span class="close" v-if="isMobile" @click="visible=false">
-          <svg id="common-icon-x-icon_yD_mH" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 9.85 9.93" class="x-icon-x" width="100%" height="100%">
-            <path style="fill:none;stroke:currentColor;stroke-miterlimit:10" d="M.71.79l8.43 8.43M9.14.71L.71 9.14"></path>
-          </svg>
-        </span>
+            <svg id="common-icon-x-icon_yD_mH" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 9.85 9.93" class="x-icon-x" width="100%" height="100%">
+              <path style="fill:none;stroke:currentColor;stroke-miterlimit:10" d="M.71.79l8.43 8.43M9.14.71L.71 9.14"></path>
+            </svg>
+          </span>
       <div :class="['persianDate_dropdown',language === 'fa' ? 'rtl' : 'ltr', visible? 'effect':'']">
   
   
@@ -18,12 +18,12 @@
               <div class="month-select">
                 <div>
                   <select @change="changeYear()" v-model="calenders[0].date[0]">
-                        <option :value="year" v-for="year in yearsArray[language]" :key="year">{{year}}</option>
-                      </select>
+                          <option :value="year" v-for="year in yearsArray[language]" :key="year">{{year}}</option>
+                        </select>
                   <b/>
                   <select @change="changeMonth()" v-model="calenders[0].date[1]">
-                        <option :value="index+1" v-for="(month, index) in months[language]" :key="month">{{month}}</option>
-                      </select>
+                          <option :value="index+1" v-for="(month, index) in months[language]" :key="month">{{month}}</option>
+                        </select>
                 </div>
                 <div v-if="showTowMonth">
                   <span>{{calenders[1].date[0]}} {{months[language][calenders[1].date[1]-1]}}</span>
@@ -38,22 +38,22 @@
           <div :class="['body', showTowMonth && !index? 'border-left':'']" v-for="(calender, index) in calenders">
             <div class="body_header">
               <span class="day-cell" v-for="item in rangeName[language]" :key="item+'_'">
-                        {{item}}
-                      </span>
+                          {{item}}
+                        </span>
             </div>
   
             <div v-for=" (value,index) in calender.arrayDays" :key="index+'___'">
               <span :class="[
-                        'day-cell',
-                        obj.value && isDisable([calender.date[0],calender.date[1],obj.value], [startEnable[language][0], startEnable[language][1], startEnable[language][2] ]) ? 'disable' : '',
-                        obj.unix==dates.startDate.unix ||obj.unix==dates.endDate.unix || (isRange && dates.startDate.unix && hoverDate==obj.unix) ? 'activeCell' :'',
-                        (!isRange && hoverDate && hoverDate==obj.unix)||
-                        (isRange && hoverDate && hoverDate==obj.unix && !dates.startDate.unix && !dates.endDateunix) ||
-                        (isRange && hoverDate && dates.startDate.unix  && !dates.endDate.unix && obj.unix < hoverDate && dates.startDate.unix < obj.unix) || 
-                        (isRange && dates.startDate.unix  && dates.endDate.unix && dates.startDate.unix<obj.unix && dates.endDate.unix> obj.unix) ? 'hoverCell':'',
-                        obj.value && obj.unix==getUnix([today[0], today[1], today[2]])? 'today':'',
-                        obj.value ? '' : 'null'
-                      ]" @mouseover="hover([calender.date[0], calender.date[1], obj.value])" v-for=" (obj,i) in calender.arrayDays[index]" :key="i+'___'" @click="selectDate(obj.value,calender.date)">{{obj.value}}</span>
+                          'day-cell',
+                          obj.value && isDisable([calender.date[0],calender.date[1],obj.value], [startEnable[language][0], startEnable[language][1], startEnable[language][2] ]) ? 'disable' : '',
+                          obj.unix==dates.startDate.unix ||obj.unix==dates.endDate.unix || (isRange && dates.startDate.unix && hoverDate==obj.unix) ? 'activeCell' :'',
+                          (!isRange && hoverDate && hoverDate==obj.unix)||
+                          (isRange && hoverDate && hoverDate==obj.unix && !dates.startDate.unix && !dates.endDateunix) ||
+                          (isRange && hoverDate && dates.startDate.unix  && !dates.endDate.unix && obj.unix < hoverDate && dates.startDate.unix < obj.unix) || 
+                          (isRange && dates.startDate.unix  && dates.endDate.unix && dates.startDate.unix<obj.unix && dates.endDate.unix> obj.unix) ? 'hoverCell':'',
+                          obj.value && obj.unix==getUnix([today[0], today[1], today[2]])? 'today':'',
+                          obj.value ? '' : 'null'
+                        ]" @mouseover="hover([calender.date[0], calender.date[1], obj.value])" v-for=" (obj,i) in calender.arrayDays[index]" :key="i+'___'" @click="selectDate(obj.value,calender.date)">{{obj.value}}</span>
             </div>
           </div>
         </div>
@@ -221,7 +221,7 @@
         this.visible = false;
       },
       selectRender(day, date, item) {
-        const now = this.startEnable[this.language];  
+        const now = this.startEnable[this.language];
         if (!(this.isDisable([date[0], date[1], day], [now[0], now[1], now[2]]))) {
           if (this.language == 'fa') {
             return {
@@ -349,201 +349,248 @@
   }
 </script>
 
-<style lang="scss">
+<style>
   .persianDate {
     font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
     position: relative;
     display: inline-block;
-    .rtl {
-      direction: rtl;
-      text-align: right;
-    }
-    .ltr {
-      direction: ltr;
-      text-align: left;
-    }
-    input {
-      line-height: 30px;
-      border-radius: 4px;
-      text-align: right;
-      padding: 0px 5px;
-      box-shadow: 0 0;
-      outline-offset: -2px !important;
-      &:focus {
-        outline: 0px !important;
-      }
-    }
-    .close {
-      display: none;
-    }
-    .persianDate_dropdown {
-      position: absolute;
-      top: 100%;
-      right: 0;
-      left: auto;
-      font-size: 14px;
-      border-radius: 4px;
-      background: #fff;
-      box-shadow: 0 -1px 1px 0 rgba(0, 0, 0, .05), 0 1px 5px 0 rgba(0, 0, 0, .15);
-      max-height: 0;
-      max-width: 0;
-      overflow: hidden;
-      display: grid;
-      opacity: 0;
-      z-index: 9;
-      &.effect {
-        transition: all .25s;
-        transition-timing-function: ease-in;
-        max-height: 430px;
-        max-width: 700px;
-        opacity: 1;
-      }
-      .head {
-        text-align: center;
-        display: -webkit-box;
-        display: -ms-flexbox;
-        display: flex;
-        background: linear-gradient(-180deg, rgba(255, 255, 255, .18) 0%, #f1f1f1 100%);
-        padding: 9px 2px;
-        .arrow {
-          width: 50px;
-          font-weight: bold;
-          text-shadow: 1px 0px;
-          color: orange;
-        }
-        .month-select {
-          flex: 1;
-          display: flex;
-          &>* {
-            flex: 1;
-          }
-          select {
-            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-            background: transparent;
-            border: 0px;
-            font-size: 14px;
-            &:focus {
-              outline: 0px !important;
-            }
-          }
-          span {}
-        }
-      }
-      .calenders {
-        display: -webkit-inline-box;
-        display: -ms-inline-flexbox;
-        display: inline-flex;
-        padding: 5px;
-        .body {
-          padding: 4px;
-          &.border-left {}
-          .body_header {
-            display: inline-flex;
-            .day-cell {
-              font-weight: bold;
-              color: #656565;
-            }
-          }
-          .day-cell {
-            width: 35px;
-            line-height: 35px;
-            text-align: center;
-            display: inline-block;
-            margin: 3px;
-            cursor: pointer;
-            border-radius: 2px;
-            overflow: hidden;
-            &.disable {
-              color: #bfbfbf;
-              cursor: no-drop;
-            }
-            &.activeCell {
-              background: rgb(255, 129, 0);
-              color: #fff;
-            }
-            &.hoverCell {
-              background: #ffe4c9;
-            }
-            &.null {
-              background: transparent;
-              border-color: transparent;
-            }
-            &.today {
-              position: relative;
-              &:after {
-                position: absolute;
-                content: '';
-                width: 7px;
-                height: 7px;
-                left: -3px;
-                top: -3px;
-                display: inline-block;
-                background: red;
-                transform: rotate(45deg)
-              }
-            }
-          }
-        }
-      }
-      .footer {
-        display: -webkit-box;
-        display: -ms-flexbox;
-        display: flex;
-        padding: 5px 10px;
-        font-size: 13px;
-        background: #fbfbfb;
-        .clear {
-          flex: 1;
-        }
-        a {}
-      }
-    }
-    .rtl.persianDate_dropdown .calenders .body.border-left {
-      border-left: solid 1px #dee2e6;
-    }
-    .ltr.persianDate_dropdown .calenders .body.border-left {
-      border-right: solid 1px #dee2e6;
-    }
-    a {
-      cursor: pointer;
-    }
-    b {
-      color: #656565;
-    }
+  }
+  
+  .persianDate .rtl {
+    direction: rtl;
+    text-align: right;
+  }
+  
+  .persianDate .ltr {
+    direction: ltr;
+    text-align: left;
+  }
+  
+  .persianDate input {
+    line-height: 30px;
+    border-radius: 4px;
+    text-align: right;
+    padding: 0px 5px;
+    -webkit-box-shadow: 0 0;
+    box-shadow: 0 0;
+    outline-offset: -2px !important;
+  }
+  
+  .persianDate input:focus {
+    outline: 0px !important;
+  }
+  
+  .persianDate .close {
+    display: none;
+  }
+  
+  .persianDate .persianDate_dropdown {
+    position: absolute;
+    top: 100%;
+    right: 0;
+    left: auto;
+    font-size: 14px;
+    border-radius: 4px;
+    background: #fff;
+    -webkit-box-shadow: 0 -1px 1px 0 rgba(0, 0, 0, 0.05), 0 1px 5px 0 rgba(0, 0, 0, 0.15);
+    box-shadow: 0 -1px 1px 0 rgba(0, 0, 0, 0.05), 0 1px 5px 0 rgba(0, 0, 0, 0.15);
+    max-height: 0;
+    max-width: 0;
+    overflow: hidden;
+    display: grid;
+    opacity: 0;
+    z-index: 9;
+  }
+  
+  .persianDate .persianDate_dropdown.effect {
+    -webkit-transition: all .25s;
+    transition: all .25s;
+    -webkit-transition-timing-function: ease-in;
+    transition-timing-function: ease-in;
+    max-height: 430px;
+    max-width: 700px;
+    opacity: 1;
+  }
+  
+  .persianDate .persianDate_dropdown .head {
+    text-align: center;
+    display: -webkit-box;
+    display: -ms-flexbox;
+    display: flex;
+    background: -webkit-gradient(linear, left top, left bottom, from(rgba(255, 255, 255, 0.18)), to(#f1f1f1));
+    background: linear-gradient(-180deg, rgba(255, 255, 255, 0.18) 0%, #f1f1f1 100%);
+    padding: 9px 2px;
+  }
+  
+  .persianDate .persianDate_dropdown .head .arrow {
+    width: 50px;
+    font-weight: bold;
+    text-shadow: 1px 0px;
+    color: orange;
+  }
+  
+  .persianDate .persianDate_dropdown .head .month-select {
+    -webkit-box-flex: 1;
+    -ms-flex: 1;
+    flex: 1;
+    display: -webkit-box;
+    display: -ms-flexbox;
+    display: flex;
+  }
+  
+  .persianDate .persianDate_dropdown .head .month-select>* {
+    -webkit-box-flex: 1;
+    -ms-flex: 1;
+    flex: 1;
+  }
+  
+  .persianDate .persianDate_dropdown .head .month-select select {
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    background: transparent;
+    border: 0px;
+    font-size: 14px;
+  }
+  
+  .persianDate .persianDate_dropdown .head .month-select select:focus {
+    outline: 0px !important;
+  }
+  
+  .persianDate .persianDate_dropdown .calenders {
+    display: -webkit-inline-box;
+    display: -ms-inline-flexbox;
+    display: inline-flex;
+    padding: 5px;
+  }
+  
+  .persianDate .persianDate_dropdown .calenders .body {
+    padding: 4px;
+  }
+  
+  .persianDate .persianDate_dropdown .calenders .body .body_header {
+    display: -webkit-inline-box;
+    display: -ms-inline-flexbox;
+    display: inline-flex;
+  }
+  
+  .persianDate .persianDate_dropdown .calenders .body .body_header .day-cell {
+    font-weight: bold;
+    color: #656565;
+  }
+  
+  .persianDate .persianDate_dropdown .calenders .body .day-cell {
+    width: 35px;
+    line-height: 35px;
+    text-align: center;
+    display: inline-block;
+    margin: 3px;
+    cursor: pointer;
+    border-radius: 2px;
+    overflow: hidden;
+  }
+  
+  .persianDate .persianDate_dropdown .calenders .body .day-cell.disable {
+    color: #bfbfbf;
+    cursor: no-drop;
+  }
+  
+  .persianDate .persianDate_dropdown .calenders .body .day-cell.activeCell {
+    background: #ff8100;
+    color: #fff;
+  }
+  
+  .persianDate .persianDate_dropdown .calenders .body .day-cell.hoverCell {
+    background: #ffe4c9;
+  }
+  
+  .persianDate .persianDate_dropdown .calenders .body .day-cell.null {
+    background: transparent;
+    border-color: transparent;
+  }
+  
+  .persianDate .persianDate_dropdown .calenders .body .day-cell.today {
+    position: relative;
+  }
+  
+  .persianDate .persianDate_dropdown .calenders .body .day-cell.today:after {
+    position: absolute;
+    content: '';
+    width: 7px;
+    height: 7px;
+    left: -3px;
+    top: -3px;
+    display: inline-block;
+    background: red;
+    -webkit-transform: rotate(45deg);
+    transform: rotate(45deg);
+  }
+  
+  .persianDate .persianDate_dropdown .footer {
+    display: -webkit-box;
+    display: -ms-flexbox;
+    display: flex;
+    padding: 5px 10px;
+    font-size: 13px;
+    background: #fbfbfb;
+  }
+  
+  .persianDate .persianDate_dropdown .footer .clear {
+    -webkit-box-flex: 1;
+    -ms-flex: 1;
+    flex: 1;
+  }
+  
+  .persianDate .rtl.persianDate_dropdown .calenders .body.border-left {
+    border-left: solid 1px #dee2e6;
+  }
+  
+  .persianDate .ltr.persianDate_dropdown .calenders .body.border-left {
+    border-right: solid 1px #dee2e6;
+  }
+  
+  .persianDate a {
+    cursor: pointer;
+  }
+  
+  .persianDate b {
+    color: #656565;
   }
   
   @media only screen and (max-width: 600px) {
-    .persianDate {
-      .persianDate-box {
-        position: fixed;
-        top: 0;
-        bottom: 0;
-        left: 0;
-        right: 0;
-        background: #fff;
-        z-index: 9;
-        align-items: center;
-        vertical-align: center;
-        display: flex;
-        justify-content: center;
-        .close {
-          display: inline;
-          position: absolute;
-          right: 15px;
-          top: 15px;
-          padding: 10px;
-          svg {
-            width: 20px;
-          }
-        }
-      }
-      .persianDate_dropdown {
-        position: relative;
-        top: auto !important;
-        left: auto !important;
-        right: auto !important;
-        display: inline-block;
-      }
+    .persianDate .persianDate-box {
+      position: fixed;
+      top: 0;
+      bottom: 0;
+      left: 0;
+      right: 0;
+      background: #fff;
+      z-index: 9;
+      -webkit-box-align: center;
+      -ms-flex-align: center;
+      align-items: center;
+      vertical-align: center;
+      display: -webkit-box;
+      display: -ms-flexbox;
+      display: flex;
+      -webkit-box-pack: center;
+      -ms-flex-pack: center;
+      justify-content: center;
+    }
+    .persianDate .persianDate-box .close {
+      display: inline;
+      position: absolute;
+      right: 15px;
+      top: 15px;
+      padding: 10px;
+    }
+    .persianDate .persianDate-box .close svg {
+      width: 20px;
+    }
+    .persianDate .persianDate_dropdown {
+      position: relative;
+      top: auto !important;
+      left: auto !important;
+      right: auto !important;
+      display: inline-block;
     }
   }
 </style>
