@@ -1,0 +1,549 @@
+<template>
+  <div class="persianDate">
+    <input v-if="value=='start'" type="text" v-model="language === 'fa' ? dates.startDate.fa : dates.startDate.en" readonly :placeholder="placeholder" @click="visible=true">
+    <input v-if="value=='end'" type="text" v-model="language === 'fa' ? dates.endDate.fa : dates.endDate.en" readonly :placeholder="placeholder" @click="visible=true">
+  
+    <div :class="visible ? 'persianDate-box':''">
+      <span class="close" v-if="isMobile" @click="visible=false">
+          <svg id="common-icon-x-icon_yD_mH" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 9.85 9.93" class="x-icon-x" width="100%" height="100%">
+            <path style="fill:none;stroke:currentColor;stroke-miterlimit:10" d="M.71.79l8.43 8.43M9.14.71L.71 9.14"></path>
+          </svg>
+        </span>
+      <div :class="['persianDate_dropdown',language === 'fa' ? 'rtl' : 'ltr', visible? 'effect':'']">
+  
+  
+        <div class="head">
+          <a @click="prevMonth()" class=" arrow">
+            <</a>
+              <div class="month-select">
+                <div>
+                  <select @change="changeYear()" v-model="calenders[0].date[0]">
+                        <option :value="year" v-for="year in yearsArray[language]" :key="year">{{year}}</option>
+                      </select>
+                  <b/>
+                  <select @change="changeMonth()" v-model="calenders[0].date[1]">
+                        <option :value="index+1" v-for="(month, index) in months[language]" :key="month">{{month}}</option>
+                      </select>
+                </div>
+                <div v-if="showTowMonth">
+                  <span>{{calenders[1].date[0]}} {{months[language][calenders[1].date[1]-1]}}</span>
+                </div>
+              </div>
+              <a @click="nextMonth()" class=" arrow">></a>
+        </div>
+  
+  
+        <div class="calenders" :class="language === 'fa' ? 'rtl' : 'ltr'" @mouseleave="hoverDate=''">
+  
+          <div :class="['body', showTowMonth && !index? 'border-left':'']" v-for="(calender, index) in calenders">
+            <div class="body_header">
+              <span class="day-cell" v-for="item in rangeName[language]" :key="item+'_'">
+                        {{item}}
+                      </span>
+            </div>
+  
+            <div v-for=" (value,index) in calender.arrayDays" :key="index+'___'">
+              <span :class="[
+                        'day-cell',
+                        obj.value && isDisable([calender.date[0],calender.date[1],obj.value], [startEnable[language][0], startEnable[language][1], startEnable[language][2] ]) ? 'disable' : '',
+                        obj.unix==dates.startDate.unix ||obj.unix==dates.endDate.unix || (isRange && dates.startDate.unix && hoverDate==obj.unix) ? 'activeCell' :'',
+                        (!isRange && hoverDate && hoverDate==obj.unix)||
+                        (isRange && hoverDate && hoverDate==obj.unix && !dates.startDate.unix && !dates.endDateunix) ||
+                        (isRange && hoverDate && dates.startDate.unix  && !dates.endDate.unix && obj.unix < hoverDate && dates.startDate.unix < obj.unix) || 
+                        (isRange && dates.startDate.unix  && dates.endDate.unix && dates.startDate.unix<obj.unix && dates.endDate.unix> obj.unix) ? 'hoverCell':'',
+                        obj.value && obj.unix==getUnix([today[0], today[1], today[2]])? 'today':'',
+                        obj.value ? '' : 'null'
+                      ]" @mouseover="hover([calender.date[0], calender.date[1], obj.value])" v-for=" (obj,i) in calender.arrayDays[index]" :key="i+'___'" @click="selectDate(obj.value,calender.date)">{{obj.value}}</span>
+            </div>
+          </div>
+        </div>
+        <div class="footer">
+  
+          <div class="clear" @click="reset">
+            {{language === 'en'? 'Clear':'پاک کردن'}}
+          </div>
+  
+          <div>
+            <a @click="ChangeLang('en')" v-if="language === 'fa'">میلادی</a>
+            <a @click="ChangeLang('fa')" v-if="language === 'en'">شمسی</a>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</template>
+
+<script>
+  import Vue from 'vue';
+  import persianDate from 'persian-date';
+  window.formatPersian = false;
+  
+  export default {
+    props: {
+      startEnable: {
+        default () {
+          return {
+            'fa': new persianDate().toArray(),
+            'en': new persianDate(new Date()).toCalendar('gregorian').toArray()
+          }
+        },
+        type: Object
+      },
+      isRange: {
+        default: false,
+        type: Boolean
+      },
+      TowMonth: {
+        default: true,
+        type: Boolean
+      },
+      placeholder: {
+        default: 'Date',
+        type: String
+      },
+      lang: {
+        default: 'fa',
+        type: String
+      },
+      dates: {
+        default () {
+          return {
+            startDate: {},
+            endDate: {}
+          }
+        },
+        type: Object
+      },
+      value: {
+        default: 'start',
+        type: String
+      }
+  
+    },
+    data() {
+      return {
+        isMobile: false,
+        showTowMonth: false,
+        hoverDate: '',
+        visible: false,
+        date: new persianDate().toArray(),
+        day: '',
+        language: null,
+        Array: [],
+        calenders: this.getCalender(),
+        yearSelected: '',
+        yearsArray: {
+          'fa': Array(15).fill(0).map((e, i) => i + Number(new persianDate().toCalendar('persian').toLocale('en').format('YYYY'))),
+          'en': Array(15).fill(0).map((e, i) => i + Number(new Date().getFullYear()))
+        },
+        showYears: false,
+        rangeName: {
+          'fa': ["ش", "ی", "د", "س", "چ", "پ", "ج"],
+          'en': ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat']
+        },
+        months: {
+          'fa': ["فروردین", "اردیبهشت", "خرداد", "تیر", "مرداد", "شهریور", "مهر", "آبان", "آذر", "دی", "بهمن", "اسفند"],
+          'en': ["January", "February", "March", "April", "May", "June", "July", "August", "September", "October", "November", "December"]
+        }
+      }
+    },
+    computed: {
+      today() {
+        return this.DateNow();
+      }
+    },
+    mounted() {
+      this.updateDate();
+    },
+  
+    methods: {
+      getCalender() {
+        if (!this.language) {
+          this.language = this.lang;
+        }
+        this.checkMobile();
+        if (this.showTowMonth) {
+          return (
+            [{
+                date: this.DateNow(),
+                arrayDays: [],
+              },
+              {
+                date: '',
+                arrayDays: []
+              }
+            ]
+          )
+        } else {
+          return (
+            [{
+              date: this.DateNow(),
+              arrayDays: [],
+            }]
+          )
+        }
+      },
+      newDate(date) {
+        return new persianDate([date[0], date[1], date[2]])
+  
+      },
+  
+      DateNow() {
+        if (this.language === 'fa') {
+          return new persianDate().toCalendar('persian').toArray()
+        } else {
+          return new persianDate(new Date()).toCalendar('gregorian').toArray()
+        }
+      },
+      updateDate() {
+        this.cellRender(this.calenders[0].date, this.calenders[0]);
+        if (this.showTowMonth) {
+          this.calenders[1].date = this.newDate(this.calenders[0].date).add('M', 1).toArray()
+          this.cellRender(this.calenders[1].date, this.calenders[1]);
+        }
+      },
+      getDays(date) {
+        if (this.language === 'fa')
+          return new persianDate([date[0], date[1], date[2]]).daysInMonth()
+        else
+          return new Date(date[0], date[1], 0).getDate();
+      },
+      selectDate(day, date) {
+        if (this.value == 'end') {
+          if (!this.dates.startDate.unix || (this.dates.startDate.unix && this.getUnix([date[0], date[1], day]) > this.dates.startDate.unix)) {
+            this.dates.endDate = this.selectRender(day, date);
+          }
+        } else if (this.value == 'start') {
+          if (!this.dates.endDate.unix || (this.getUnix([date[0], date[1], day]) < this.dates.endDate.unix)) {
+            this.dates.startDate = this.selectRender(day, date);
+          }
+        }
+        this.visible = false;
+      },
+      selectRender(day, date, item) {
+        const now = this.startEnable[this.language];  
+        if (!(this.isDisable([date[0], date[1], day], [now[0], now[1], now[2]]))) {
+          if (this.language == 'fa') {
+            return {
+              'fa': new persianDate([date[0], date[1], day]).format('YYYY/M/D'),
+              'en': new persianDate([date[0], date[1], day]).toCalendar('gregorian').format('YYYY/M/D'),
+              'unix': this.getUnix([date[0], date[1], day])
+            }
+          } else {
+            return {
+              'fa': new persianDate([date[0], date[1], day]).toCalendar('persian').format('YYYY/M/D'),
+              'en': new persianDate([date[0], date[1], day]).format('YYYY/M/D'),
+              'unix': this.getUnix([date[0], date[1], day])
+            }
+          }
+        }
+      },
+      nextMonth() {
+        this.calenders[0].date = this.newDate(this.calenders[0].date).add('M', 1).toArray();
+        this.updateDate();
+      },
+      prevMonth() {
+        if (!(this.calenders[0].date[0] == this.startEnable[this.language][0] && this.calenders[0].date[1] == this.startEnable[this.language][1])) {
+          this.calenders[0].date = this.newDate(this.calenders[0].date).subtract('M', 1).toArray();
+          this.updateDate();
+        }
+      },
+      ChangeLang(lang) {
+        this.language = lang;
+        this.calenders[0].date = this.DateNow();
+        this.updateDate();
+      },
+      changeYear() {
+        this.calenders[0].date = this.newDate(this.calenders[0].date).toArray();
+        this.updateDate();
+      },
+      changeMonth() {
+        this.calenders[0].date = this.newDate(this.calenders[0].date).toArray();
+        this.updateDate();
+      },
+      isDisable(arr1, arr2) {
+        console.log(arr1, arr2);
+        const a = this.getUnix(arr1);
+        const b = this.getUnix(arr2);
+  
+        if (a >= b)
+          return false;
+        else
+          return true
+  
+      },
+      getUnix(date) {
+        return new persianDate(date).unix();
+      },
+      hover(date) {
+        this.hoverDate = this.getUnix(date);
+      },
+      cellRender(date, obj) {
+        const days = this.getDays(date);
+        const day = this.newDate([date[0], date[1], 1]).day();
+        const count = day ? day - 1 : day;
+        obj.arrayDays = new Array(Math.ceil((count + days) / 7)).fill(new Array(7));
+  
+        obj.arrayDays[0] = [...(Array(day - 1).fill({}))]
+        obj.arrayDays[0].push(...Array.from({
+          length: 8 - day
+        }, (v, k) => {
+          return {
+            'value': (k + 1),
+            'unix': this.getUnix([obj.date[0], obj.date[1], k + 1])
+          }
+        }))
+  
+        obj.arrayDays.forEach((arr, index) => {
+          if (index) {
+            obj.arrayDays[index] = [...Array.from({
+              length: 7
+            }, (v, k) => {
+              const val = index * 7 - day + k + 2;
+              //  console.log(val, days)
+              if (val <= days) {
+                return {
+                  'value': val,
+                  'unix': this.getUnix([obj.date[0], obj.date[1], val])
+                };
+              }
+              return {
+                'value': null
+              }
+            })]
+          }
+        });
+      },
+      reset() {
+        if (this.value == 'start') {
+          this.dates.startDate = {};
+        }
+        if (this.value == 'end') {
+          this.dates.endDate = {};
+        }
+  
+      },
+      checkMobile() {
+        this.showTowMonth = this.TowMonth;
+        if (window.innerWidth <= 600) {
+          this.isMobile = true;
+          this.showTowMonth = false;
+        }
+      }
+    },
+    created() {
+  
+      this.language = this.lang;
+      let self = this;
+      this.checkMobile();
+  
+  
+      window.addEventListener('click', (e) => {
+        // close dropdown when clicked outside
+        if (!self.$el.contains(e.target)) {
+          self.visible = false;
+        }
+      })
+    }
+  
+  }
+</script>
+
+<style lang="scss">
+  .persianDate {
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    position: relative;
+    display: inline-block;
+    .rtl {
+      direction: rtl;
+      text-align: right;
+    }
+    .ltr {
+      direction: ltr;
+      text-align: left;
+    }
+    input {
+      line-height: 30px;
+      border-radius: 4px;
+      text-align: right;
+      padding: 0px 5px;
+      box-shadow: 0 0;
+      outline-offset: -2px !important;
+      &:focus {
+        outline: 0px !important;
+      }
+    }
+    .close {
+      display: none;
+    }
+    .persianDate_dropdown {
+      position: absolute;
+      top: 100%;
+      right: 0;
+      left: auto;
+      font-size: 14px;
+      border-radius: 4px;
+      background: #fff;
+      box-shadow: 0 -1px 1px 0 rgba(0, 0, 0, .05), 0 1px 5px 0 rgba(0, 0, 0, .15);
+      max-height: 0;
+      max-width: 0;
+      overflow: hidden;
+      display: grid;
+      opacity: 0;
+      z-index: 9;
+      &.effect {
+        transition: all .25s;
+        transition-timing-function: ease-in;
+        max-height: 430px;
+        max-width: 700px;
+        opacity: 1;
+      }
+      .head {
+        text-align: center;
+        display: -webkit-box;
+        display: -ms-flexbox;
+        display: flex;
+        background: linear-gradient(-180deg, rgba(255, 255, 255, .18) 0%, #f1f1f1 100%);
+        padding: 9px 2px;
+        .arrow {
+          width: 50px;
+          font-weight: bold;
+          text-shadow: 1px 0px;
+          color: orange;
+        }
+        .month-select {
+          flex: 1;
+          display: flex;
+          &>* {
+            flex: 1;
+          }
+          select {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: transparent;
+            border: 0px;
+            font-size: 14px;
+            &:focus {
+              outline: 0px !important;
+            }
+          }
+          span {}
+        }
+      }
+      .calenders {
+        display: -webkit-inline-box;
+        display: -ms-inline-flexbox;
+        display: inline-flex;
+        padding: 5px;
+        .body {
+          padding: 4px;
+          &.border-left {}
+          .body_header {
+            display: inline-flex;
+            .day-cell {
+              font-weight: bold;
+              color: #656565;
+            }
+          }
+          .day-cell {
+            width: 35px;
+            line-height: 35px;
+            text-align: center;
+            display: inline-block;
+            margin: 3px;
+            cursor: pointer;
+            border-radius: 2px;
+            overflow: hidden;
+            &.disable {
+              color: #bfbfbf;
+              cursor: no-drop;
+            }
+            &.activeCell {
+              background: rgb(255, 129, 0);
+              color: #fff;
+            }
+            &.hoverCell {
+              background: #ffe4c9;
+            }
+            &.null {
+              background: transparent;
+              border-color: transparent;
+            }
+            &.today {
+              position: relative;
+              &:after {
+                position: absolute;
+                content: '';
+                width: 7px;
+                height: 7px;
+                left: -3px;
+                top: -3px;
+                display: inline-block;
+                background: red;
+                transform: rotate(45deg)
+              }
+            }
+          }
+        }
+      }
+      .footer {
+        display: -webkit-box;
+        display: -ms-flexbox;
+        display: flex;
+        padding: 5px 10px;
+        font-size: 13px;
+        background: #fbfbfb;
+        .clear {
+          flex: 1;
+        }
+        a {}
+      }
+    }
+    .rtl.persianDate_dropdown .calenders .body.border-left {
+      border-left: solid 1px #dee2e6;
+    }
+    .ltr.persianDate_dropdown .calenders .body.border-left {
+      border-right: solid 1px #dee2e6;
+    }
+    a {
+      cursor: pointer;
+    }
+    b {
+      color: #656565;
+    }
+  }
+  
+  @media only screen and (max-width: 600px) {
+    .persianDate {
+      .persianDate-box {
+        position: fixed;
+        top: 0;
+        bottom: 0;
+        left: 0;
+        right: 0;
+        background: #fff;
+        z-index: 9;
+        align-items: center;
+        vertical-align: center;
+        display: flex;
+        justify-content: center;
+        .close {
+          display: inline;
+          position: absolute;
+          right: 15px;
+          top: 15px;
+          padding: 10px;
+          svg {
+            width: 20px;
+          }
+        }
+      }
+      .persianDate_dropdown {
+        position: relative;
+        top: auto !important;
+        left: auto !important;
+        right: auto !important;
+        display: inline-block;
+      }
+    }
+  }
+</style>
