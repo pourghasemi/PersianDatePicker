@@ -55,5 +55,4 @@ bower install persian-date --save-dev
 | isRange             | Boolean      | false                    | if true, the type is daterange or datetimerange                  |
 | TowMonth            | Booleant     | false                    | if true, show two month                                          |
 | placeholder         | String       | 'Date'                   | input placeholder text                                           |
-| lang                | String       | 'fa'                     | if 'fa', calender Persian. if 'en', calender gregorian |
 | value               | String       | 'start'                  | if 'start', input value startDate. if 'end', input value endDate |
