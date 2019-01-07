@@ -98,6 +98,10 @@
         default: 'Date',
         type: String
       },
+      diff: {
+        default: 1,
+        type: Number
+      },
       dates: {
         default () {
           return {
@@ -214,6 +218,7 @@
       selectDate(day, date) {
         if (this.value == 'end') {
           if (!this.dates.startDate.unix || (this.dates.startDate.unix && this.getUnix([date[0], date[1], day]) > this.dates.startDate.unix)) {
+            
             this.dates.endDate = this.selectRender(day, date);
           }
         } else if (this.value == 'start') {
@@ -221,7 +226,17 @@
             this.dates.startDate = this.selectRender(day, date);
           }
         }
+        if(this.dates.startDate.unix && this.dates.endDate.unix){
+          const end=new persianDate(new Date(this.dates.endDate.en));
+          const start=new persianDate(new Date(this.dates.startDate.en));
+          let diffrent = end.diff(start, 'days');
+          if(diffrent < this.diff){
+            this.dates.endDate={};
+            alert('diff = 3');
+          }
+        }
         this.visible = false;
+
       },
       selectRender(day, date, item) {
         const now = this.startEnable[this.dates.language];

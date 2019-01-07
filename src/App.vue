@@ -1,7 +1,7 @@
 <template>
   <div id="app">
-    <VueMoment v-bind:dates.sync="calender" :value="'start'" :startEnable="startEnable"  :isRange="true" :TowMonth="true" :placeholder="'Start Date'"  />
-    <VueMoment v-bind:dates.sync="calender" :value="'end'" :startEnable="startEnable"  :isRange="true" :TowMonth="true" :placeholder="'End Date'" /> 
+    <VueMoment v-bind:dates.sync="calender" :value="'start'" :startEnable="startEnable"  :isRange="true" :TowMonth="true" :placeholder="'Start Date'" :diff="4"/>
+    <VueMoment v-bind:dates.sync="calender" :value="'end'" :startEnable="startEnable"  :isRange="true" :TowMonth="true" :placeholder="'End Date'" :diff="4"/> 
    </div>
 </template>
 
