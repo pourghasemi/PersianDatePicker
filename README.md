@@ -50,7 +50,7 @@ bower install persian-date --save-dev
 
 | Prop                | Type         | Default                  | Description                                                      |
 |---------------------|--------------|--------------------------|------------------------------------------------------------------|
-| dates               | Object       | {startDate:{},endDate{},language:''} | dates.startDate ={en:"۲۰۱۹/۲/۱۱", fa:"۱۳۹۷/۱۱/۲۲", language:'fa'} |  
+| dates               | Object       | {startDate:{},endDate{},language:'fa'} | dates.startDate ={en:"۲۰۱۹/۲/۱۱", fa:"۱۳۹۷/۱۱/۲۲", language:'fa'} |  
 | startEnable         | Object       | Date today               | { 'fa': '','en':''}                                              |
 | isRange             | Boolean      | false                    | if true, the type is daterange or datetimerange                  |
 | TowMonth            | Booleant     | false                    | if true, show two month                                          |
