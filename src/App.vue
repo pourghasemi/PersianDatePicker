@@ -1,7 +1,7 @@
 <template>
   <div id="app">
-    <VueMoment v-bind:dates.sync="calender" :value="'start'" :startEnable="startEnable"  :isRange="true" :TowMonth="true" :placeholder="'Start Date'" :lang="'fa'" />
-    <VueMoment v-bind:dates.sync="calender" :value="'end'" :startEnable="startEnable"  :isRange="true" :TowMonth="true" :placeholder="'End Date'" :lang="'fa'" /> 
+    <VueMoment v-bind:dates.sync="calender" :value="'start'" :startEnable="startEnable"  :isRange="true" :TowMonth="true" :placeholder="'Start Date'"  />
+    <VueMoment v-bind:dates.sync="calender" :value="'end'" :startEnable="startEnable"  :isRange="true" :TowMonth="true" :placeholder="'End Date'" /> 
    </div>
 </template>
 
@@ -15,7 +15,8 @@
       return {
         calender: {
           startDate: {},
-          endDate: {}
+          endDate: {},
+          language:'en'
         },
         startEnable: {
           'fa': new persianDate().toArray(),

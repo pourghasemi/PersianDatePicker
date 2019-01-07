@@ -1,71 +1,68 @@
 <template>
   <div class="persianDate">
-    <input v-if="value=='start'" type="text" v-model="language === 'fa' ? dates.startDate.fa : dates.startDate.en" readonly :placeholder="placeholder" @click="visible=true">
-    <input v-if="value=='end'" type="text" v-model="language === 'fa' ? dates.endDate.fa : dates.endDate.en" readonly :placeholder="placeholder" @click="visible=true">
-  
+    <input v-if="value=='start'" type="text" v-model="dates.language === 'fa' ? dates.startDate.fa : dates.startDate.en" readonly :placeholder="placeholder" @click="visible=true">
+    <input v-if="value=='end'" type="text" v-model="dates.language === 'fa' ? dates.endDate.fa : dates.endDate.en" readonly :placeholder="placeholder" @click="visible=true">
     <div :class="visible ? 'persianDate-box':''">
       <span class="close" v-if="isMobile" @click="visible=false">
-            <svg id="common-icon-x-icon_yD_mH" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 9.85 9.93" class="x-icon-x" width="100%" height="100%">
-              <path style="fill:none;stroke:currentColor;stroke-miterlimit:10" d="M.71.79l8.43 8.43M9.14.71L.71 9.14"></path>
-            </svg>
-          </span>
-      <div :class="['persianDate_dropdown',language === 'fa' ? 'rtl' : 'ltr', visible? 'effect':'']">
-  
-  
+              <svg id="common-icon-x-icon_yD_mH" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 9.85 9.93" class="x-icon-x" width="100%" height="100%">
+                <path style="fill:none;stroke:currentColor;stroke-miterlimit:10" d="M.71.79l8.43 8.43M9.14.71L.71 9.14"></path>
+              </svg>
+            </span>
+      <div :class="['persianDate_dropdown',dates.language === 'fa' ? 'rtl' : 'ltr', visible? 'effect':'']">
         <div class="head">
           <a @click="prevMonth()" class=" arrow">
             <</a>
               <div class="month-select">
                 <div>
                   <select @change="changeYear()" v-model="calenders[0].date[0]">
-                          <option :value="year" v-for="year in yearsArray[language]" :key="year">{{year}}</option>
-                        </select>
+                            <option :value="year" v-for="year in yearsArray[dates.language]" :key="year">{{year}}</option>
+                          </select>
                   <b/>
                   <select @change="changeMonth()" v-model="calenders[0].date[1]">
-                          <option :value="index+1" v-for="(month, index) in months[language]" :key="month">{{month}}</option>
-                        </select>
+                            <option :value="index+1" v-for="(month, index) in months[dates.language]" :key="month">{{month}}</option>
+                          </select>
                 </div>
                 <div v-if="showTowMonth">
-                  <span>{{calenders[1].date[0]}} {{months[language][calenders[1].date[1]-1]}}</span>
+                  <span>{{calenders[1].date[0]}} {{months[dates.language][calenders[1].date[1]-1]}}</span>
                 </div>
               </div>
               <a @click="nextMonth()" class=" arrow">></a>
         </div>
   
   
-        <div class="calenders" :class="language === 'fa' ? 'rtl' : 'ltr'" @mouseleave="hoverDate=''">
+        <div class="calenders" :class="dates.language === 'fa' ? 'rtl' : 'ltr'" @mouseleave="hoverDate=''">
   
           <div :class="['body', showTowMonth && !index? 'border-left':'']" v-for="(calender, index) in calenders">
             <div class="body_header">
-              <span class="day-cell" v-for="item in rangeName[language]" :key="item+'_'">
-                          {{item}}
-                        </span>
+              <span class="day-cell" v-for="item in rangeName[dates.language]" :key="item+'_'">
+                            {{item}}
+                          </span>
             </div>
   
-            <div v-for=" (value,index) in calender.arrayDays" :key="index+'___'">
+            <div v-for=" (val,index) in calender.arrayDays" :key="index+'___'">
               <span :class="[
-                          'day-cell',
-                          obj.value && isDisable([calender.date[0],calender.date[1],obj.value], [startEnable[language][0], startEnable[language][1], startEnable[language][2] ]) ? 'disable' : '',
-                          obj.unix==dates.startDate.unix ||obj.unix==dates.endDate.unix || (isRange && dates.startDate.unix && hoverDate==obj.unix) ? 'activeCell' :'',
-                          (!isRange && hoverDate && hoverDate==obj.unix)||
-                          (isRange && hoverDate && hoverDate==obj.unix && !dates.startDate.unix && !dates.endDateunix) ||
-                          (isRange && hoverDate && dates.startDate.unix  && !dates.endDate.unix && obj.unix < hoverDate && dates.startDate.unix < obj.unix) || 
-                          (isRange && dates.startDate.unix  && dates.endDate.unix && dates.startDate.unix<obj.unix && dates.endDate.unix> obj.unix) ? 'hoverCell':'',
-                          obj.value && obj.unix==getUnix([today[0], today[1], today[2]])? 'today':'',
-                          obj.value ? '' : 'null'
-                        ]" @mouseover="hover([calender.date[0], calender.date[1], obj.value])" v-for=" (obj,i) in calender.arrayDays[index]" :key="i+'___'" @click="selectDate(obj.value,calender.date)">{{obj.value}}</span>
+                            'day-cell',
+                            obj.value && isDisable([calender.date[0],calender.date[1],obj.value], [startEnable[dates.language][0], startEnable[dates.language][1], startEnable[dates.language][2] ]) ? 'disable' : '',
+                            obj.unix==dates.startDate.unix ||obj.unix==dates.endDate.unix || (isRange && dates.startDate.unix && hoverDate==obj.unix) ? 'activeCell' :'',
+                            (!isRange && hoverDate && hoverDate==obj.unix)||
+                            (isRange && hoverDate && hoverDate==obj.unix && !dates.startDate.unix && !dates.endDateunix) ||
+                            (value=='end' && isRange && hoverDate && dates.startDate.unix  && !dates.endDate.unix && obj.unix < hoverDate && dates.startDate.unix < obj.unix) || 
+                            (isRange && dates.startDate.unix  && dates.endDate.unix && dates.startDate.unix<obj.unix && dates.endDate.unix> obj.unix) ? 'hoverCell':'',
+                            obj.value && obj.unix==getUnix([today[0], today[1], today[2]])? 'today':'',
+                            obj.value ? '' : 'null'
+                          ]" @mouseover="hover([calender.date[0], calender.date[1], obj.value])" v-for=" (obj,i) in calender.arrayDays[index]" :key="i+'___'" @click="selectDate(obj.value,calender.date)">{{obj.value}}</span>
             </div>
           </div>
         </div>
         <div class="footer">
   
           <div class="clear" @click="reset">
-            {{language === 'en'? 'Clear':'پاک کردن'}}
+            {{dates.language === 'en'? 'Clear':'پاک کردن'}}
           </div>
   
           <div>
-            <a @click="ChangeLang('en')" v-if="language === 'fa'">میلادی</a>
-            <a @click="ChangeLang('fa')" v-if="language === 'en'">شمسی</a>
+            <a @click="ChangeLang('en')" v-if="dates.language === 'fa'">میلادی</a>
+            <a @click="ChangeLang('fa')" v-if="dates.language === 'en'">شمسی</a>
           </div>
         </div>
       </div>
@@ -76,7 +73,7 @@
 <script>
   import Vue from 'vue';
   import persianDate from 'persian-date';
-  window.formatPersian = false;
+  persianDate.toLocale('en');
   
   export default {
     props: {
@@ -101,15 +98,12 @@
         default: 'Date',
         type: String
       },
-      lang: {
-        default: 'fa',
-        type: String
-      },
       dates: {
         default () {
           return {
             startDate: {},
-            endDate: {}
+            endDate: {},
+            lang: 'fa'
           }
         },
         type: Object
@@ -128,7 +122,6 @@
         visible: false,
         date: new persianDate().toArray(),
         day: '',
-        language: null,
         Array: [],
         calenders: this.getCalender(),
         yearSelected: '',
@@ -155,12 +148,15 @@
     mounted() {
       this.updateDate();
     },
+    watch: {
+      'dates.language': function(newVal) {
+        this.ChangeLang(newVal);
+        this.updateDate();
+      }
+    },
   
     methods: {
       getCalender() {
-        if (!this.language) {
-          this.language = this.lang;
-        }
         this.checkMobile();
         if (this.showTowMonth) {
           return (
@@ -184,15 +180,22 @@
         }
       },
       newDate(date) {
-        return new persianDate([date[0], date[1], date[2]])
-  
+        if (this.dates.language === 'fa') {
+          persianDate.toCalendar('persian')
+          return new persianDate([date[0], date[1], date[2]])
+        } else {
+          persianDate.toCalendar('gregorian')
+          return new persianDate(new Date(date[0], date[1] - 1, date[2]))
+        }
       },
   
       DateNow() {
-        if (this.language === 'fa') {
-          return new persianDate().toCalendar('persian').toArray()
+        if (this.dates.language === 'fa') {
+          persianDate.toCalendar('persian')
+          return new persianDate().toArray()
         } else {
-          return new persianDate(new Date()).toCalendar('gregorian').toArray()
+          persianDate.toCalendar('gregorian')
+          return new persianDate(new Date()).toArray()
         }
       },
       updateDate() {
@@ -203,7 +206,7 @@
         }
       },
       getDays(date) {
-        if (this.language === 'fa')
+        if (this.dates.language === 'fa')
           return new persianDate([date[0], date[1], date[2]]).daysInMonth()
         else
           return new Date(date[0], date[1], 0).getDate();
@@ -221,19 +224,24 @@
         this.visible = false;
       },
       selectRender(day, date, item) {
-        const now = this.startEnable[this.language];
+        const now = this.startEnable[this.dates.language];
         if (!(this.isDisable([date[0], date[1], day], [now[0], now[1], now[2]]))) {
-          if (this.language == 'fa') {
+          if (this.dates.language == 'fa') {
+            persianDate.toCalendar('persian');
             return {
               'fa': new persianDate([date[0], date[1], day]).format('YYYY/M/D'),
-              'en': new persianDate([date[0], date[1], day]).toCalendar('gregorian').format('YYYY/M/D'),
-              'unix': this.getUnix([date[0], date[1], day])
+              'unix': this.getUnix([date[0], date[1], day]),
+              'en': new persianDate([date[0], date[1], day]).toCalendar('gregorian').format('YYYY/M/D')
+  
             }
           } else {
+            persianDate.toCalendar('gregorian');
             return {
-              'fa': new persianDate([date[0], date[1], day]).toCalendar('persian').format('YYYY/M/D'),
               'en': new persianDate([date[0], date[1], day]).format('YYYY/M/D'),
-              'unix': this.getUnix([date[0], date[1], day])
+              'fa': new persianDate([date[0], date[1], day]).toCalendar('persian').format('YYYY/M/D'),
+              'unix': this.getUnix([date[0], date[1], day]),
+  
+  
             }
           }
         }
@@ -243,13 +251,13 @@
         this.updateDate();
       },
       prevMonth() {
-        if (!(this.calenders[0].date[0] == this.startEnable[this.language][0] && this.calenders[0].date[1] == this.startEnable[this.language][1])) {
+        if (!(this.calenders[0].date[0] == this.startEnable[this.dates.language][0] && this.calenders[0].date[1] == this.startEnable[this.dates.language][1])) {
           this.calenders[0].date = this.newDate(this.calenders[0].date).subtract('M', 1).toArray();
           this.updateDate();
         }
       },
       ChangeLang(lang) {
-        this.language = lang;
+        this.dates.language = lang;
         this.calenders[0].date = this.DateNow();
         this.updateDate();
       },
@@ -262,7 +270,6 @@
         this.updateDate();
       },
       isDisable(arr1, arr2) {
-        console.log(arr1, arr2);
         const a = this.getUnix(arr1);
         const b = this.getUnix(arr2);
   
@@ -273,6 +280,9 @@
   
       },
       getUnix(date) {
+        if (this.dates.language == 'en') {
+          return new persianDate(new Date(date)).unix();
+        }
         return new persianDate(date).unix();
       },
       hover(date) {
@@ -300,7 +310,6 @@
               length: 7
             }, (v, k) => {
               const val = index * 7 - day + k + 2;
-              //  console.log(val, days)
               if (val <= days) {
                 return {
                   'value': val,
@@ -315,13 +324,8 @@
         });
       },
       reset() {
-        if (this.value == 'start') {
-          this.dates.startDate = {};
-        }
-        if (this.value == 'end') {
-          this.dates.endDate = {};
-        }
-  
+        this.dates.startDate = {};
+        this.dates.endDate = {}; 
       },
       checkMobile() {
         this.showTowMonth = this.TowMonth;
@@ -332,8 +336,6 @@
       }
     },
     created() {
-  
-      this.language = this.lang;
       let self = this;
       this.checkMobile();
   
